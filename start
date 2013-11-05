@@ -1,0 +1,27 @@
+#!/usr/bin/ruby
+
+require './settings.rb'
+
+require './image_reader.rb'
+require './figure_finder.rb'
+require './figure_checker.rb'
+
+dir = SETTINGS["dir"]
+index = 0
+
+ImageReader.new(dir).images.each do |img|
+  figures = FigureFinder.new(img).figures
+  
+  puts "--------------------------------------------------------------------------------"
+  puts "File: #{img.path}"
+  puts "Found #{figures.count} figure(s)"
+  
+  figures.each do |figure|
+    index += 1
+    puts "--------------------------------------------------------------------------------"
+    puts "Figure ##{index}"
+    puts FigureChecker.get_info(figure)
+  end
+  
+  puts "================================================================================"
+end

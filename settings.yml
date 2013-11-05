@@ -1,0 +1,10 @@
+approximation:
+  point_split_radius: 10
+  point_find_radius:  2
+  gradient_max_error: 2
+
+checker:
+  error: 5
+  pass_percent: 0.9
+
+dir: images
