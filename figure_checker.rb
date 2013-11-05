@@ -37,7 +37,7 @@ class FigureChecker
       type = "Line"
     
     elsif nodes_count == 3
-      s = lines.first.length * lines.last.length * Math.sin(angles.last) / 2
+      s = lines.first.length * lines.last.length * Math.sin(angles.first) / 2
       a = calc_accord(s, fill_space)
       if a >= pass_percent
         accord = a
@@ -52,7 +52,7 @@ class FigureChecker
       
       if a >= pass_percent and check_array(angles, Math::PI / 2, error)
         accord = a
-        if calc_accord(lines.map{ |v| v.length }, (lines_length / 4)) <= error
+        if check_array(lines.map{ |v| v.length }, (lines_length / 4), error)
           type = "Square"
         else
           type = "Rectangle"

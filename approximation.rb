@@ -8,26 +8,47 @@ class Approximation
   
   def initialize(nodes)
     @split_radius = SETTINGS["approximation"]["point_split_radius"]
+    @min_angle = SETTINGS["approximation"]["min_angle_deg"]
     
-    @nodes  = first_compact(nodes)
+    @nodes  = compact(nodes)
     @lines  = create_lines
     @angles = create_angles
   end
   
   private
   
-  def first_compact(nodes)
-    r = []
-    if !nodes.empty?
-      r << nodes.delete_at(0)
-      while !nodes.empty?
-        n = nodes.delete_at(0)
-        unless r.inject(false){ |f, v| f ||= node_around?(n, v) }
-          r << n
+  def compact(nodes)
+    result = []
+    nodes.each do |node|
+      unless result.inject(false){ |f, v| f ||= node_around?(node, v) }
+        result << node
+      end
+    end
+    
+    flag = true
+    while flag
+      flag = false
+      if result.count > 2
+        curr = result.last
+        i = 0
+        while i < (result.count - 1)
+          prev = curr
+          curr = result[i]
+          nexy = result[i + 1]
+          
+          line1 = Line.new(prev, curr)
+          line2 = Line.new(curr, nexy)
+          
+          if Line.angle(line1, line2, true) < @min_angle
+            result.delete_at(i)
+            flag = true
+            break
+          end
+          i += 1
         end
       end
     end
-    r
+    result
   end
   
   def node_around?(node1, node2)
@@ -36,36 +57,25 @@ class Approximation
   
   def create_lines
     lines = []
-    n = @nodes.dup
-    
-    first = n.delete_at(0)
-    current = first
-    
-    while !n.empty?
-      prev = current
-      current = n.delete_at(0)
-      lines << Line.new(prev, current)
-    end
-    if @nodes.count > 2
-      lines << Line.new(first, current)
+    curr = @nodes.last
+    @nodes.each do |node|
+      prev = curr
+      curr = node
+      lines << Line.new(prev, curr)
     end
     lines
   end
   
   def create_angles
+    return [] if @lines.count < 2
+    
     angles = []
-    return angles if @lines.length < 2
-    
-    l = @lines.dup
-    first = l.delete_at(0)
-    current = first
-    
-    while !l.empty?
-      prev = current
-      current = l.delete_at(0)
-      angles << Line.angle(prev, current)
+    curr = @lines.last
+    @lines.each do |line|
+      prev = curr
+      curr = line
+      angles << Line.angle(prev, curr)
     end
-    angles << Line.angle(first, current)
     angles
   end
   

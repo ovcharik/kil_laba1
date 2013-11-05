@@ -21,6 +21,14 @@ ImageReader.new(dir).images.each do |img|
     puts "--------------------------------------------------------------------------------"
     puts "Figure ##{index}"
     puts FigureChecker.get_info(figure)
+    if figure.columns < 160
+      c = figure.columns
+      figure.pixels.each_index do |i|
+        putc "\n" if i % c == 0
+        putc figure.pixels[i] ? '#' : '.'
+      end
+      puts
+    end
   end
   
   puts "================================================================================"

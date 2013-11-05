@@ -2,6 +2,7 @@ approximation:
   point_split_radius: 10
   point_find_radius:  2
   gradient_max_error: 2
+  min_angle_deg: 2
 
 checker:
   error: 5
